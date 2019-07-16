@@ -31,10 +31,10 @@ func UpdateFileMetaDB(fmeta FileMeta) bool{
 }
 
 // UpdateFileMetaDB: 从mysql中获取文件元信息
-func GetFileMetaDB(fileSha1 string) (FileMeta,error){
+func GetFileMetaDB(fileSha1 string) (*FileMeta,error){
 	tfile,err := mydb.GetFileMeta(fileSha1)
 	if err != nil {
-		return FileMeta{},err
+		return &FileMeta{},err
 	}
 
 	fmeta := FileMeta{
@@ -44,7 +44,7 @@ func GetFileMetaDB(fileSha1 string) (FileMeta,error){
 		Location:tfile.FileAddr.String,
 	}
 
-	return fmeta,nil
+	return &fmeta,nil
 }
 
 // GetFileMeta: 通过sha1获取文件元信息对象
