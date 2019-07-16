@@ -13,7 +13,7 @@ var db *sql.DB
 
 func init() {
 	//db, _ = sql.Open("mysql", "root:root@tcp(localhost:3339)/fileserver?charset=utf8")
-	db, _ = sql.Open("mysql", "root:root@tcp(localhost:3339)/fileserver?charset=utf8")
+	db, _ = sql.Open("mysql", "root:@tcp(:3339)/fileserver?charset=utf8")
 	db.SetMaxOpenConns(1000)
 
 	err := db.Ping()
