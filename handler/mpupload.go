@@ -43,7 +43,7 @@ func InitialMultipartUploadHandler(w http.ResponseWriter,r *http.Request) {
 	upInfo := MultipartUploadInfo{
 		FileHash:filehash,
 		FileSize:filesize,
-		UploadID:username+fmt.Sprint("%x",time.Now()),
+		UploadID:username+fmt.Sprint("%x",time.Now().UnixNano()),
 		ChunkSize:5*1024*1024,
 		ChunkCount:int(math.Ceil(float64(filesize)/(5*1024*1024))),
 	}
@@ -70,7 +70,7 @@ func UploadPartHandler(w http.ResponseWriter, r *http.Request) {
 	defer rConn.Close()
 
 	// 获得文件句柄，用于存储分块内容
-	fpath := "FileStore-Server/static/tempFiles/data/" + uploadID + "/" + chunkIndex
+	fpath := "static/tempFiles/data/" + uploadID + "/" + chunkIndex
 	os.MkdirAll(path.Dir(fpath), 0744)
 
 	fd, err := os.Create(fpath)

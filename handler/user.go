@@ -129,7 +129,7 @@ func UserInfoHandler(w http.ResponseWriter,r *http.Request) {
 //GenToken: 生成40位token
 func GenToken(username string) string {
 	//40位token: md5(username + timestamp(时间戳) + token_salt) + timestamp[:8]
-	ts := fmt.Sprint("%x",time.Now().Unix())
+	ts := fmt.Sprintf("%x",time.Now().Unix())
 	tokenPrefix := util.MD5([]byte(username+ts+"_tokensalt"))
 	return tokenPrefix + ts[:8]
 }
