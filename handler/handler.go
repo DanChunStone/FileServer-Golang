@@ -3,6 +3,7 @@ package handler
 import (
 	"FileStore-Server/db"
 	"FileStore-Server/meta"
+	"FileStore-Server/store/oss"
 	"FileStore-Server/util"
 	"encoding/json"
 	"fmt"
@@ -37,7 +38,7 @@ func UploadHandler(w http.ResponseWriter,r *http.Request)  {
 		//创建文件元信息实例
 		fileMeta := meta.FileMeta{
 			FileName:head.Filename,
-			Location:"./static/tempFiles/"+head.Filename,
+			Location:"tempFiles/"+head.Filename,
 			UploadAt:time.Now().Format("2006-01-02 15:04:05"),
 		}
 
@@ -59,6 +60,19 @@ func UploadHandler(w http.ResponseWriter,r *http.Request)  {
 		//计算文件哈希值
 		localFile.Seek(0,0)
 		fileMeta.FileSha1 = util.FileSha1(localFile)
+
+		// 游标重新回到文件头部
+		localFile.Seek(0, 0)
+
+		// 将文件写入阿里云OSS
+		ossPath := "oss/" + fileMeta.FileSha1 + fileMeta.FileName
+		err = oss.Bucket().PutObject(ossPath,localFile)
+		if err != nil {
+			fmt.Println(err.Error())
+			w.Write([]byte("Upload failed"))
+			return
+		}
+		fileMeta.Location = ossPath
 
 		//将文件元信息添加到mysql中
 		_ = meta.UpdateFileMetaDB(fileMeta)
@@ -251,4 +265,19 @@ func TryFastUploadHandler(w http.ResponseWriter,r *http.Request) {
 		w.Write(resp.JSONBytes())
 		return
 	}
+}
+
+func DownloadURLHandler(w http.ResponseWriter,r *http.Request) {
+	r.ParseForm()
+	filehash := r.Form.Get("filehash")
+
+	fmt.Println(filehash)
+
+	// 从文件表查找记录
+	row, _ := db.GetFileMeta(filehash)
+
+	// 判断是否存储在oss，并获取url
+	signedURL := oss.DownloadURL(row.FileAddr.String)
+
+	w.Write([]byte(signedURL))
 }

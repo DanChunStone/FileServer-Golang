@@ -129,7 +129,7 @@
           cell = x.insertCell();
           cell.innerHTML = '<button class="btn btn-success" ' +
             'style="height:30px;margin:5px 0;"' +
-            'onClick = "downloadFile(\'http://localhost:8080/file/' +
+            ' onClick = "downloadFile(\'http://localhost:8000/file/' +
             'downloadurl?filehash=' + data[i].FileHash + '&' + queryParams() + '\')">下载</button>';
         }
       }
@@ -154,10 +154,7 @@
       success: function (body, textStatus, jqXHR) {
         try {
           alert("文件即将下载自: " + body);
-          var elemIF = document.createElement("iframe");
-          elemIF.src = body;
-          elemIF.style.display = "none";
-          document.body.appendChild(elemIF);
+            window.open(body,"_blank");
         } catch (e) {
           alert(e);
         }

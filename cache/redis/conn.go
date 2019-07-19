@@ -1,15 +1,16 @@
 package redis
 
 import (
+	cfg "FileStore-Server/config"
 	"fmt"
-	"github.com/garyburd/redigo/redis"
 	"time"
+	"github.com/garyburd/redigo/redis"
 )
 
-var(
-	pool *redis.Pool
-	redisHost = "47.95.253.230:6380"
-	redisPass = "191250"
+var (
+	pool      *redis.Pool
+	redisHost = cfg.RedisHost
+	redisPass = cfg.RedisPass
 )
 
 //newRedisPool:
@@ -44,7 +45,7 @@ func newRedisPool() *redis.Pool {
 	}
 }
 
-func init()  {
+func init() {
 	pool = newRedisPool()
 }
 
