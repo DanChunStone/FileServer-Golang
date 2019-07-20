@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"FileStore-Server/config"
 	"FileStore-Server/db"
 	"FileStore-Server/meta"
+	"FileStore-Server/mq"
 	"FileStore-Server/store/oss"
 	"FileStore-Server/util"
 	"encoding/json"
@@ -66,13 +68,29 @@ func UploadHandler(w http.ResponseWriter,r *http.Request)  {
 
 		// 将文件写入阿里云OSS
 		ossPath := "oss/" + fileMeta.FileSha1 + fileMeta.FileName
-		err = oss.Bucket().PutObject(ossPath,localFile)
-		if err != nil {
-			fmt.Println(err.Error())
-			w.Write([]byte("Upload failed"))
-			return
+		//err = oss.Bucket().PutObject(ossPath,localFile)
+		//if err != nil {
+		//	fmt.Println(err.Error())
+		//	w.Write([]byte("Upload failed"))
+		//	return
+		//}
+		//fileMeta.Location = ossPath
+
+		// 将转移任务添加到rabbitmq队列中
+		data := mq.TransferData{
+			FileHash:fileMeta.FileSha1,
+			CurLocation:fileMeta.Location,
+			DestLocation:ossPath,
 		}
-		fileMeta.Location = ossPath
+		pubData, _ := json.Marshal(data)
+		pubSuc := mq.Publish(
+			config.TransExchangeName,
+			config.TransOSSRoutingKey,
+			pubData,
+		)
+		if !pubSuc {
+			// TODO: 当前发送转移信息失败，稍后重试
+		}
 
 		//将文件元信息添加到mysql中
 		_ = meta.UpdateFileMetaDB(fileMeta)
@@ -111,12 +129,16 @@ func GetFileMetaHandler(w http.ResponseWriter,r *http.Request)  {
 	}
 
 	//json格式化meta实例
-	data,err := json.Marshal(fMeta)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+	if fMeta != nil {
+		data, err := json.Marshal(fMeta)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		w.Write(data)
+	} else {
+		w.Write([]byte(`{"code":-1,"msg":"no such file"}`))
 	}
-	w.Write(data)
 }
 
 // FileQueryHandler: 查询批量的文件元信息
@@ -189,12 +211,12 @@ func FileMetaUpdateHandler(w http.ResponseWriter,r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-	
+
+	// 更新文件元信息
 	curFileMeta := meta.GetFileMeta(fileSha1)
 	curFileMeta.FileName = newFileName
 	meta.UpdateFileMeta(curFileMeta)
 
-	w.WriteHeader(http.StatusOK)
 	data,err := json.Marshal(curFileMeta)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -223,6 +245,7 @@ func FileDeleteHandler(w http.ResponseWriter,r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+//TryFastUploadHandler: 尝试进行秒传
 func TryFastUploadHandler(w http.ResponseWriter,r *http.Request) {
 	r.ParseForm()
 
@@ -267,6 +290,7 @@ func TryFastUploadHandler(w http.ResponseWriter,r *http.Request) {
 	}
 }
 
+//DownloadURLHandler: 获取oss文件下载URL
 func DownloadURLHandler(w http.ResponseWriter,r *http.Request) {
 	r.ParseForm()
 	filehash := r.Form.Get("filehash")
