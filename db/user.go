@@ -20,11 +20,11 @@ func UserSignUp(username string,passwd string)bool {
 	//预编译sql语句
 	stmt,err := mydb.DBConn().Prepare(
 			"insert ignore into tbl_user (`user_name`,`user_pwd`) values (?,?)")
-	defer stmt.Close()
 	if err != nil {
 		fmt.Println("Failed to insert, err: "+err.Error())
 		return false
 	}
+	defer stmt.Close()
 
 	//进行数据库插入
 	ret,err := stmt.Exec(username,passwd)
@@ -44,11 +44,11 @@ func UserSignin(username string,encpwd string) bool {
 	//预编译sql语句
 	stmt,err := mydb.DBConn().Prepare(
 		"select * from tbl_user where user_name = ? limit 1")
-	defer stmt.Close()
 	if err != nil {
 		fmt.Println(err.Error())
 		return false
 	}
+	defer stmt.Close()
 
 	//进行数据库查询，并处理错误
 	rows,err := stmt.Query(username)
@@ -73,11 +73,11 @@ func UserSignin(username string,encpwd string) bool {
 func UpdateToken(username string,token string) bool {
 	stmt,err := mydb.DBConn().Prepare(
 		"replace into tbl_user_token (`user_name`,`user_token`) values (?,?)")
-	defer stmt.Close()
 	if err != nil {
 		fmt.Println(err.Error())
 		return false
 	}
+	defer stmt.Close()
 
 	_,err = stmt.Query(username,token)
 	if err != nil {
@@ -94,10 +94,10 @@ func GetUserInfo(username string) (User,error) {
 
 	stmt,err := mydb.DBConn().Prepare(
 		"select user_name,signup_at from tbl_user where user_name=? limit 1")
-	defer stmt.Close()
 	if err != nil {
 		return user,err
 	}
+	defer stmt.Close()
 
 	//执行查询
 	err = stmt.QueryRow(username).Scan(&user.Username,&user.SignupAt)

@@ -29,11 +29,11 @@ func UploadHandler(w http.ResponseWriter,r *http.Request)  {
 	}else if r.Method == "POST" {//接收文件流及存储到本地目录
 		//获取表单上传的文件，并打开
 		file,head,err := r.FormFile("file")
-		defer file.Close()
 		if err != nil {
 			fmt.Printf("Failed to get data, err: %s\n",err.Error())
 			return
 		}
+		defer file.Close()
 
 		//创建文件元信息实例
 		fileMeta := meta.FileMeta{
@@ -44,11 +44,11 @@ func UploadHandler(w http.ResponseWriter,r *http.Request)  {
 
 		//创建本地文件
 		localFile,err := os.Create(fileMeta.Location)
-		defer localFile.Close()
 		if err != nil {
 			fmt.Printf("Failed to create file, err: %s\n",err.Error())
 			return
 		}
+		defer localFile.Close()
 
 		//复制文件信息到本地文件
 		fileMeta.FileSize,err = io.Copy(localFile,file)
@@ -154,11 +154,11 @@ func DownloadHandler(w http.ResponseWriter,r *http.Request)  {
 
 	//根据文件元信息打开本地文件
 	f,err := os.Open(fm.Location)
-	defer f.Close()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	defer f.Close()
 
 	//将本地文件读入内存
 	data,err := ioutil.ReadAll(f)
