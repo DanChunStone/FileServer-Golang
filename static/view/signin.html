@@ -80,8 +80,11 @@
         }
       },
       success: function (body, textStatus, jqXHR) {
-        console.log(body);
-        var resp = JSON.parse(body);
+        console.log(body + "  +  " + jqXHR);
+        var bodys = JSON.stringify(body);
+        console.log(bodys);
+
+          var resp = JSON.parse(bodys);
         localStorage.setItem("token", resp.data.Token)
         localStorage.setItem("username", resp.data.Username)
         window.location.href = resp.data.Location;
