@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"FileStore-Server/config"
 	"FileStore-Server/util"
 	"fmt"
 	"io/ioutil"
@@ -8,11 +9,6 @@ import (
 	"net/http"
 	dblayer "FileStore-Server/db"
 	"time"
-)
-
-const (
-	//用于加密的盐值(自定义)
-	pwdSalt = "*#890"
 )
 
 //SignupHandler : 处理用户注册请求
@@ -40,7 +36,7 @@ func SignupHandler(w http.ResponseWriter,r *http.Request) {
 		}
 
 		//对密码进行加盐及取Sha1值加密
-		encPasswd := util.Sha1([]byte(passwd+pwdSalt))
+		encPasswd := util.Sha1([]byte(passwd + config.PwdSalt))
 		ok := dblayer.UserSignUp(username,encPasswd)
 		if ok {
 			w.Write([]byte("SUCCESS"))
@@ -62,7 +58,7 @@ func SignInHandler(w http.ResponseWriter,r *http.Request) {
 	password := r.Form.Get("password")
 
 	//1.校验用户名与密码
-	encPasswd := util.Sha1([]byte(password + pwdSalt))
+	encPasswd := util.Sha1([]byte(password + config.PwdSalt))
 	pwdChecked := dblayer.UserSignin(username,encPasswd)
 	if !pwdChecked {
 		w.Write([]byte("FAILED"))

@@ -1,18 +1,14 @@
 package GinHandler
 
 import (
-	"FileStore-Server/common"
+	"FileStore-Server/config"
 	dblayer "FileStore-Server/db"
+	"FileStore-Server/common"
 	"FileStore-Server/util"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	nativeHandler "FileStore-Server/handler"
-)
-
-const (
-	//用于加密的盐值(自定义)
-	pwdSalt = "*#890"
 )
 
 //SignupHandler: 返回注册页面
@@ -34,7 +30,7 @@ func DoSignupHandler(c *gin.Context)  {
 	}
 
 	//对密码进行加盐及取Sha1值加密
-	encPasswd := util.Sha1([]byte(passwd+pwdSalt))
+	encPasswd := util.Sha1([]byte(passwd + config.PwdSalt))
 	ok := dblayer.UserSignUp(username,encPasswd)
 	if ok {
 		c.JSON(http.StatusOK,gin.H{
@@ -60,7 +56,7 @@ func DoSignInHandler(c *gin.Context) {
 	password :=c.Request.FormValue("password")
 
 	//1.校验用户名与密码
-	encPasswd := util.Sha1([]byte(password + pwdSalt))
+	encPasswd := util.Sha1([]byte(password + config.PwdSalt))
 	pwdChecked := dblayer.UserSignin(username,encPasswd)
 	if !pwdChecked {
 		c.JSON(http.StatusOK,gin.H{
@@ -120,5 +116,5 @@ func UserInfoHandler(c *gin.Context) {
 		Msg:"查询用户信息成功",
 		Data:user,
 	}
-	c.JSON(http.StatusOK,resp.JSONBytes())
+	c.JSON(http.StatusOK,resp)
 }

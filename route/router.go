@@ -31,10 +31,10 @@ func Router() *gin.Engine {
 	router.POST("/file/upload",handler.DoUploadHandler)
 	router.POST("/file/fastupload",handler.TryFastUploadHandler)
 	// 查询文件
-	router.GET("/file/meta",handler.GetFileMetaHandler)
-	router.GET("/file/query",handler.FileQueryHandler)
+	router.POST("/file/meta",handler.GetFileMetaHandler)
+	router.POST("/file/query",handler.FileQueryHandler)
 	// 下载文件
-	router.GET("/file/download",handler.DownloadHandler)
+	router.POST("/file/download",handler.DownloadHandler)
 	router.POST("/file/downloadurl",handler.DownloadURLHandler)
 	// 更新文件
 	router.POST("/file/update",handler.FileMetaUpdateHandler)

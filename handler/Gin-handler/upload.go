@@ -20,7 +20,7 @@ import (
 //UploadHandler: 文件上传
 func UploadHandler(c *gin.Context) {
 	//返回上传文件的html页面
-	c.Redirect(http.StatusFound,"/static/view/index.html")
+	c.Redirect(http.StatusFound,"/static/view/upload.html")
 }
 
 //DoUploadHandler: 处理文件上传
