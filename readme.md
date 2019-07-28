@@ -3,10 +3,15 @@
 ### 项目结构说明
 
 │  go.mod		: go module管理依赖文件
+
 │  go.sum		: go module管理生成的版本管理文件
+
 │  readme.md	: 本文件，项目说明
+
 │  tree.md		: 记录文件目录结构树
+
 ├─cache		: 提供redis缓存支持，主要用于文件分块传输
+
 │  └─redis
 ├─common		: 统一错误码(实际并没有怎么用)
 ├─config		: 统一项目配置(数据库、oss、mq、redis、监听地址等)
