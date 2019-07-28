@@ -1,9 +1,9 @@
 package oss
 
 import (
+	cfg "FileStore-Server/config"
 	"fmt"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
-	cfg "FileStore-Server/config"
 	)
 
 var ossCli *oss.Client

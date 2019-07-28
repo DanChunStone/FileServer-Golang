@@ -3,8 +3,8 @@ package redis
 import (
 	cfg "FileStore-Server/config"
 	"fmt"
-	"time"
 	"github.com/garyburd/redigo/redis"
+	"time"
 )
 
 var (
