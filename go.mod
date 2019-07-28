@@ -9,8 +9,10 @@ require (
 	github.com/gin-gonic/gin v1.4.0
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/golang/protobuf v1.3.2
+	github.com/hashicorp/consul v1.5.3
 	github.com/micro/go-micro v1.7.0
 	github.com/nats-io/nats-server/v2 v2.0.2 // indirect
 	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/streadway/amqp v0.0.0-20190404075320-75d898a42a94
+	golang.org/x/net v0.0.0-20190620200207-3b0461eec859
 )
