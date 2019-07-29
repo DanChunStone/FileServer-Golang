@@ -103,3 +103,28 @@ Go云盘项目创建
 实现项目的初步微服务化
 
 添加了项目结构的说明
+
+### 项目启动
+
+- rabiitmq转存任务启动
+
+  > go run service/normal/transfer/main.go
+
+- 原生Go语言模式云盘服务端启动
+
+  > go run service/normal/upload/main.go
+
+- Gin框架模式云盘服务端启动
+
+  > go run service/Gin/main.go
+
+- 微服务模式
+
+  - 账户相关微服务启动
+
+    > go run service/Microservice/account/main.go --registry=consul
+
+  - API网关服务启动
+
+    > go run service/Microservice/apigw/main.go --registry=consul
+

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package go.micro.service.upload;
+
+// 编译命令(service/Microservice目录下执行)：
+// protoc --proto_path=./upload/proto --go_out=./upload/proto --micro_out=./upload/proto ./upload/proto/upload.proto
+
+service UploadService {
+    // 获取上传入口地址
+    rpc UploadEntry(ReqEntry) returns (RespEntry) {}
+}
+
+message ReqEntry {
+}
+
+message RespEntry {
+    int32 code = 1;
+    string message = 2;
+    string entry = 3;
+}

@@ -4,7 +4,7 @@ import (
 	"FileStore-Server/common"
 	"FileStore-Server/config"
 	dblayer "FileStore-Server/db"
-	"FileStore-Server/service/Microservice/account/proto"
+	proto "FileStore-Server/service/Microservice/account/proto"
 	"FileStore-Server/util"
 	"context"
 )
@@ -33,4 +33,24 @@ func (u *User) Signup(ctx context.Context, req *proto.ReqSignup, resp *proto.Res
 		resp.Message = "注册失败"
 	}
 	return nil
+}
+
+// 用户登录
+func (u *User) Signin(context.Context, *proto.ReqSignin, *proto.RespSignin) error {
+
+}
+
+// 获取用户信息
+func (u *User) UserInfo(context.Context, *proto.ReqUserInfo, *proto.RespUserInfo) error {
+
+}
+
+// 获取用户文件
+func (u *User) UserFiles(context.Context, *proto.ReqUserFile, *proto.RespUserFile) error {
+
+}
+
+// 获取用户文件
+func (u *User) UserFileRename(context.Context, *proto.ReqUserFileRename, *proto.RespUserFileRename) error {
+
 }

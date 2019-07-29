@@ -2,7 +2,7 @@ package main
 
 import (
 	"FileStore-Server/service/Microservice/account/handler"
-	"FileStore-Server/service/Microservice/account/proto"
+	proto "FileStore-Server/service/Microservice/account/proto"
 	micro "github.com/micro/go-micro"
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-micro/registry/consul"
