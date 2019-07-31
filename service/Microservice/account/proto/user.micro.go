@@ -42,7 +42,7 @@ type UserService interface {
 	UserInfo(ctx context.Context, in *ReqUserInfo, opts ...client.CallOption) (*RespUserInfo, error)
 	// 获取用户文件
 	UserFiles(ctx context.Context, in *ReqUserFile, opts ...client.CallOption) (*RespUserFile, error)
-	// 获取用户文件
+	// 重命名文件
 	UserFileRename(ctx context.Context, in *ReqUserFileRename, opts ...client.CallOption) (*RespUserFileRename, error)
 }
 
@@ -125,7 +125,7 @@ type UserServiceHandler interface {
 	UserInfo(context.Context, *ReqUserInfo, *RespUserInfo) error
 	// 获取用户文件
 	UserFiles(context.Context, *ReqUserFile, *RespUserFile) error
-	// 获取用户文件
+	// 重命名文件
 	UserFileRename(context.Context, *ReqUserFileRename, *RespUserFileRename) error
 }
 

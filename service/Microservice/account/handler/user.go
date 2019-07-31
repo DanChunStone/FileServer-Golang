@@ -7,9 +7,19 @@ import (
 	proto "FileStore-Server/service/Microservice/account/proto"
 	"FileStore-Server/util"
 	"context"
+	"fmt"
+	"time"
 )
 
 type User struct {}
+
+// GenToken : 生成token
+func GenToken(username string) string {
+	// 40位字符:md5(username+timestamp+token_salt)+timestamp[:8]
+	ts := fmt.Sprintf("%x", time.Now().Unix())
+	tokenPrefix := util.MD5([]byte(username + ts + "_tokensalt"))
+	return tokenPrefix + ts[:8]
+}
 
 //Signup: 用户注册
 func (u *User) Signup(ctx context.Context, req *proto.ReqSignup, resp *proto.RespSignup) error {
@@ -42,15 +52,5 @@ func (u *User) Signin(context.Context, *proto.ReqSignin, *proto.RespSignin) erro
 
 // 获取用户信息
 func (u *User) UserInfo(context.Context, *proto.ReqUserInfo, *proto.RespUserInfo) error {
-
-}
-
-// 获取用户文件
-func (u *User) UserFiles(context.Context, *proto.ReqUserFile, *proto.RespUserFile) error {
-
-}
-
-// 获取用户文件
-func (u *User) UserFileRename(context.Context, *proto.ReqUserFileRename, *proto.RespUserFileRename) error {
 
 }

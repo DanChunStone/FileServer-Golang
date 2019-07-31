@@ -14,7 +14,7 @@ service UserService {
     rpc UserInfo(ReqUserInfo) returns (RespUserInfo) {}
     // 获取用户文件
     rpc UserFiles(ReqUserFile) returns (RespUserFile) {}
-    // 获取用户文件
+    // 重命名文件
     rpc UserFileRename(ReqUserFileRename) returns (RespUserFileRename) {}
 }
 

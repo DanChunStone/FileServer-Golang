@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"FileStore-Server/service/Microservice/account/proto"
+	proto "FileStore-Server/service/Microservice/account/proto"
 	"github.com/gin-gonic/gin"
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-micro/registry/consul"
