@@ -4,14 +4,13 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"github.com/bitly/go-simplejson"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 	"strconv"
-
-	jsonit "github.com/json-iterrator/go"
 )
 
 func multipartUpload(filename string, targetURL string, chunkSize int) error {
@@ -103,14 +102,19 @@ func main() {
 	}
 
 	// 2. 得到uploadID以及服务端指定的分块大小chunkSize
-	uploadID := jsonit.Get(body, "data").Get("UploadID").ToString()
-	chunkSize := jsonit.Get(body, "data").Get("ChunkSize").ToInt()
+	bodyJson, err := simplejson.NewJson([]byte(body))
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(-1)
+	}
+	uploadID, _ := bodyJson.Get("data").Get("UploadID").String()
+	chunkSize, _ := bodyJson.Get("data").Get("ChunkSize").Int()
 	fmt.Printf("uploadid: %s  chunksize: %d\n", uploadID, chunkSize)
 
 	// 3. 请求分块上传接口
 	filename := "F:\\1"
 	tURL := "http://localhost:8000/file/mpupload/uppart?" +
-		"username="+username+"&token=" + token + "&uploadid=" + uploadID
+		"username=" + username + "&token=" + token + "&uploadid=" + uploadID
 	multipartUpload(filename, tURL, chunkSize)
 
 	// 4. 请求分块完成接口

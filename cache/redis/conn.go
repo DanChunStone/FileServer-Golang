@@ -13,7 +13,7 @@ var (
 	redisPass = cfg.RedisPass
 )
 
-//newRedisPool:
+// newRedisPool:
 func newRedisPool() *redis.Pool {
 	return &redis.Pool{
 		MaxIdle:     50,
