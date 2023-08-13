@@ -18,7 +18,7 @@ import (
 	"time"
 )
 
-// InitialMultipartUploadHandler: 初始化分块上传
+// InitialMultipartUploadHandler : 初始化分块上传
 func InitialMultipartUploadHandler(c *gin.Context) {
 	// 解析用户参数
 	username := c.Request.FormValue("username")
@@ -55,11 +55,12 @@ func InitialMultipartUploadHandler(c *gin.Context) {
 	c.Data(http.StatusOK, "application/json", util.NewRespMsg(0, "OK", upInfo).JSONBytes())
 }
 
-// UploadPartHandler: 上传文件分块
+// UploadPartHandler : 上传文件分块
 func UploadPartHandler(c *gin.Context) {
 	// 解析用户请求参数
 	// username := c.Request.FormValue("username")
 	uploadID := c.Request.FormValue("uploadid")
+	//uploadID := c.PostForm("uploadid")
 	chunkIndex := c.Request.FormValue("index")
 
 	// 获得redis连接池中的一个连接
@@ -97,7 +98,7 @@ func UploadPartHandler(c *gin.Context) {
 	c.Data(http.StatusOK, "application/json", util.NewRespMsg(0, "OK", nil).JSONBytes())
 }
 
-// CompleteUploadHandler: 通知上传合并
+// CompleteUploadHandler : 通知上传合并
 func CompleteUploadHandler(c *gin.Context) {
 	// 解析请求参数
 	upid := c.Request.FormValue("uploadid")
@@ -110,7 +111,7 @@ func CompleteUploadHandler(c *gin.Context) {
 	rConn := rPool.RedisPool().Get()
 	defer rConn.Close()
 
-	// 通过uploadid查询redis并判断是否所有分块上传完成
+	// 通过uploadId查询redis并判断是否所有分块上传完成
 	data, err := redis.Values(rConn.Do("HGETALL", "MP_"+upid))
 	if err != nil {
 		log.Println(err.Error())

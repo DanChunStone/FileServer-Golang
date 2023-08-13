@@ -15,6 +15,7 @@ import (
 	"time"
 )
 
+// MultipartUploadInfo 分块的结构体
 type MultipartUploadInfo struct {
 	FileHash   string
 	FileSize   int
@@ -23,7 +24,7 @@ type MultipartUploadInfo struct {
 	ChunkCount int    //分块数量
 }
 
-// InitialMultipartUploadHandler: 初始化分块上传
+// InitialMultipartUploadHandler : 初始化分块上传
 func InitialMultipartUploadHandler(w http.ResponseWriter, r *http.Request) {
 	// 解析用户参数
 	r.ParseForm()
@@ -57,7 +58,7 @@ func InitialMultipartUploadHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(util.NewRespMsg(0, "OK", upInfo).JSONBytes())
 }
 
-// UploadPartHandler: 上传文件分块
+// UploadPartHandler UploadPartHandler: 上传文件分块
 func UploadPartHandler(w http.ResponseWriter, r *http.Request) {
 	// 解析用户请求参数
 	r.ParseForm()

@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+//todo:单例模式改造
+
 var (
 	pool      *redis.Pool
 	redisHost = cfg.RedisHost
