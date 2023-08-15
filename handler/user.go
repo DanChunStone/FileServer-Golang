@@ -2,20 +2,20 @@ package handler
 
 import (
 	"FileStore-Server/config"
+	dblayer "FileStore-Server/db"
 	"FileStore-Server/util"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	dblayer "FileStore-Server/db"
 	"time"
 )
 
-//SignupHandler : 处理用户注册请求
-func SignupHandler(w http.ResponseWriter,r *http.Request) {
+// SignupHandler : 处理用户注册请求
+func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	//GET: 页面请求
 	if r.Method == http.MethodGet {
-		data,err := ioutil.ReadFile("./static/view/signup.html")
+		data, err := ioutil.ReadFile("./static/view/signup.html")
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -37,17 +37,17 @@ func SignupHandler(w http.ResponseWriter,r *http.Request) {
 
 		//对密码进行加盐及取Sha1值加密
 		encPasswd := util.Sha1([]byte(passwd + config.PwdSalt))
-		ok := dblayer.UserSignUp(username,encPasswd)
+		ok := dblayer.UserSignUp(username, encPasswd)
 		if ok {
 			w.Write([]byte("SUCCESS"))
-		}else {
+		} else {
 			w.Write([]byte("FAILED"))
 		}
 	}
 }
 
-//SignInHandler: 登录接口
-func SignInHandler(w http.ResponseWriter,r *http.Request) {
+// SignInHandler: 登录接口
+func SignInHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		http.Redirect(w, r, "/static/view/signin.html", http.StatusFound)
 		return
@@ -59,7 +59,7 @@ func SignInHandler(w http.ResponseWriter,r *http.Request) {
 
 	//1.校验用户名与密码
 	encPasswd := util.Sha1([]byte(password + config.PwdSalt))
-	pwdChecked := dblayer.UserSignin(username,encPasswd)
+	pwdChecked := dblayer.UserSignin(username, encPasswd)
 	if !pwdChecked {
 		w.Write([]byte("FAILED"))
 		return
@@ -67,7 +67,7 @@ func SignInHandler(w http.ResponseWriter,r *http.Request) {
 
 	//2.生成用户访问凭证Token
 	token := GenToken(username)
-	upRes := dblayer.UpdateToken(username,token)
+	upRes := dblayer.UpdateToken(username, token)
 	if !upRes {
 		fmt.Println("更新访问凭证失败")
 		w.Write([]byte("FAILED"))
@@ -76,23 +76,23 @@ func SignInHandler(w http.ResponseWriter,r *http.Request) {
 
 	//3.封装凭证与响应信息给客户端
 	resp := util.RespMsg{
-		Code:0,
-		Msg:"OK",
+		Code: 0,
+		Msg:  "OK",
 		Data: struct {
-			Location	string
-			Username	string
-			Token		string
+			Location string
+			Username string
+			Token    string
 		}{
-			Location:"http://"+r.Host+"/static/view/home.html",
-			Username:username,
-			Token:token,
+			Location: "http://" + r.Host + "/static/view/home.html",
+			Username: username,
+			Token:    token,
 		},
 	}
 	w.Write(resp.JSONBytes())
 }
 
-//UserInfoHandler: 查询用户信息
-func UserInfoHandler(w http.ResponseWriter,r *http.Request) {
+// UserInfoHandler: 查询用户信息
+func UserInfoHandler(w http.ResponseWriter, r *http.Request) {
 	//1.解析请求参数
 	r.ParseForm()
 	username := r.Form.Get("username")
@@ -106,7 +106,7 @@ func UserInfoHandler(w http.ResponseWriter,r *http.Request) {
 	//}
 
 	//3.查询用户信息
-	user,err := dblayer.GetUserInfo(username)
+	user, err := dblayer.GetUserInfo(username)
 	if err != nil {
 		log.Println(err.Error())
 		w.WriteHeader(http.StatusForbidden)
@@ -115,22 +115,22 @@ func UserInfoHandler(w http.ResponseWriter,r *http.Request) {
 
 	//4.组装并响应用户数据
 	resp := util.RespMsg{
-		Code:0,
-		Msg:"OK",
-		Data:user,
+		Code: 0,
+		Msg:  "OK",
+		Data: user,
 	}
 	w.Write(resp.JSONBytes())
 }
 
-//GenToken: 生成40位token
+// GenToken: 生成40位token
 func GenToken(username string) string {
 	//40位token: md5(username + timestamp(时间戳) + token_salt) + timestamp[:8]
-	ts := fmt.Sprintf("%x",time.Now().Unix())
-	tokenPrefix := util.MD5([]byte(username+ts+"_tokensalt"))
+	ts := fmt.Sprintf("%x", time.Now().Unix())
+	tokenPrefix := util.MD5([]byte(username + ts + "_tokensalt"))
 	return tokenPrefix + ts[:8]
 }
 
-//IsTokenValid: 验证token是否失效
+// IsTokenValid: 验证token是否失效
 func IsTokenValid(token string) bool {
 	if len(token) != 40 {
 		fmt.Println("token长度异常")

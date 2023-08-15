@@ -7,13 +7,15 @@ import (
 	"time"
 )
 
+//todo:单例模式改造
+
 var (
 	pool      *redis.Pool
 	redisHost = cfg.RedisHost
 	redisPass = cfg.RedisPass
 )
 
-//newRedisPool:
+// newRedisPool:
 func newRedisPool() *redis.Pool {
 	return &redis.Pool{
 		MaxIdle:     50,

@@ -103,6 +103,7 @@ func UploadPartHandler(c *gin.Context) {
 	}
 	defer fd.Close()
 
+	//每次只读1mb
 	buf := make([]byte, 1024*1024)
 	for {
 		n, err := c.Request.Body.Read(buf)

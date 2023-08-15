@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>瑾瑜网盘系统</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <div class="box">
+        <div class="forms">
+            <div class="tips">
+                <span class="login-btn">login</span>
+                <span class="register-btn">register</span>
+            </div>
+            <div class="login">
+                <div class="form-title">
+                    <h1>Hello</h1>
+                    <h4>One click triple connection</h4>
+                </div>
+                <div class="form">
+                    <div class="username input-item" >
+                        <input type="text" class="ipts" id="username">
+                    </div>
+                    <div class="password input-item" >
+                        <input type="password" class="ipts" id ="password">
+                    </div>
+                    <div class="other-select">
+                        <div class="rem-pwd">
+                            <input type="checkbox" id="check">
+                            <label for="check" class="rem-pwd-tips">remember password</label>
+                        </div>
+                        <span class="fogot-pwd-btn">forgot password</span>
+                    </div>
+                    <button class="btn">Login</button>
+                    <div class="other-login">
+                        <span>Other login methods</span>
+                        <div class="login-img">
+                            <img src="../asset/QQ.png" alt="">
+                            <img src="../asset/wechat-fill.png" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="register">
+                <div class="form-title">
+                    <h1>Register</h1>
+                    <h4>One click triple connection</h4>
+                </div>
+                <div class="form">
+                    <div class="username input-item">
+                        <input type="text" class="ipts">
+                    </div>
+                    <div class="password input-item">
+                        <input type="password" class="ipts">
+                    </div>
+                    <div class="conform-password input-item">
+                        <input type="password" class="ipts">
+                    </div>
+                    <button class="btn">Register</button>
+                </div>
+            </div>
+            <div class="fogot-pwd">
+                <div class="form-title">
+                    <h1>fogot-pwd</h1>
+                    <h4>One click triple connection</h4>
+                </div>
+                <div class="form">
+                    <div class="username input-item">
+                        <input type="text" class="ipts">
+                    </div>
+                    <div class="password input-item">
+                        <input type="password" class="ipts">
+                    </div>
+                    <div class="code input-item">
+                        <input type="text" class="ipts">
+                        <span class="veri-code-tips">Click To Get</span>
+                    </div>
+                    <button class="btn">Confirm</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+<script>
+    const login = document.querySelector('.login')
+    const register = document.querySelector('.register')
+    const fogotPwd = document.querySelector('.fogot-pwd')
+    const registerBtn = document.querySelector('.register-btn')
+    const loginBtn = document.querySelector('.login-btn')
+    const fogotPwdBtn = document.querySelector('.fogot-pwd-btn')
+    const veriCodeTips = document.querySelector('.veri-code-tips');
+    let reckonTimeFlag = 5; //倒计时
+    let reckonTime; //定时器
+    //定时器
+    function countDown() {
+        veriCodeTips.innerHTML = `RESEND(${reckonTimeFlag})`
+        reckonTimeFlag--;
+        if (reckonTimeFlag < 0) {
+            clearInterval(reckonTime);
+            reckonTimeFlag = 5;
+            veriCodeTips.innerHTML = `Click To Get`;
+            veriCodeTips.style.color = "rgb(113 123 185)";
+            veriCodeTips.onclick = veriCodeTipsClick;
+        }
+    }
+
+    //点击事件触发的方法
+    function veriCodeTipsClick() {
+        veriCodeTips.onclick = null;
+        veriCodeTips.style.color = "rgb(153, 151, 151)";
+        reckonTime = setInterval(countDown, 1000);
+        countDown();
+    }
+
+    veriCodeTips.addEventListener('click', function () {
+        veriCodeTipsClick()
+        console.log("--------------------")
+    })
+    registerBtn.addEventListener('click', function () {
+        login.style.opacity = '0'
+        fogotPwd.style.opacity = '0'
+        register.style.opacity = '1'
+        login.style.zIndex = '-1'
+        fogotPwd.style.zIndex = '-1'
+        register.style.zIndex = '10'
+        register.style.animation = 'into 1s ease'
+        login.style.animation = 'none'
+        fogotPwd.style.animation = 'none'
+        registerBtn.style.borderBottom = '4px solid rgb(249, 177, 122)'
+        registerBtn.style.color = '#fff'
+        loginBtn.style.borderBottom = 'none'
+        loginBtn.style.color = 'rgb(100, 108, 154)'
+
+    })
+    loginBtn.addEventListener('click', function () {
+        login.style.opacity = '1'
+        register.style.opacity = '0'
+        fogotPwd.style.opacity = '0'
+        login.style.zIndex = '10'
+        fogotPwd.style.zIndex = '-1'
+        register.style.zIndex = '-1'
+        login.style.animation = 'into 1s ease'
+        register.style.animation = 'none'
+        fogotPwd.style.animation = 'none'
+        registerBtn.style.borderBottom = ''
+        registerBtn.style.color = 'rgb(100, 108, 154)'
+        loginBtn.style.borderBottom = '4px solid rgb(249, 177, 122)'
+        loginBtn.style.color = '#fff'
+    })
+    login.addEventListener('click',function (){
+        var username = document.getElementById('username');
+        var password = document.getElementById('password');
+        console.log("用户名："+username.value+"   密码："+password.value)
+
+        $.ajax({
+            url: "/user/signin",
+            type: "POST",
+            data: {
+                "username": username.value,
+                "password": password.value
+            },
+            error: function (err) {
+                alert(err);
+            },
+            success: function (body) {
+                localStorage.setItem("token", body.data.Token)
+                localStorage.setItem("username", body.data.Username)
+                // 增加上传入口ip:port
+                localStorage.setItem("uploadEntry", body.data.UploadEntry);
+                // 增加下载入口ip:port
+                localStorage.setItem("downloadEntry", body.data.DownloadEntry);
+                window.location.href = body.data.Location;
+            }
+        });
+    })
+
+    fogotPwdBtn.addEventListener('click', function () {
+        fogotPwd.style.opacity = '1'
+        login.style.opacity = '0'
+        register.style.opacity = '0'
+        login.style.zIndex = '-1'
+        fogotPwd.style.zIndex = '10'
+        register.style.zIndex = '-1'
+        fogotPwd.style.animation = 'into 1s ease'
+        register.style.animation = 'none'
+        login.style.animation = 'none'
+
+    })
+</script>
+
+</html>

@@ -47,14 +47,14 @@ func initChannel() bool {
 	}
 
 	// 获取rabbitmq的一个连接
-	conn,err := amqp.Dial(config.RabbitURL)
+	conn, err := amqp.Dial(config.RabbitURL)
 	if err != nil {
 		log.Println(err.Error())
 		return false
 	}
 
 	// 打开一个channel，用于消息的发布与接收
-	channel,err = conn.Channel()
+	channel, err = conn.Channel()
 	if err != nil {
 		log.Println(err.Error())
 		return false
